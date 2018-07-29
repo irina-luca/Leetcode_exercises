@@ -1,3 +1,5 @@
+import org.w3c.dom.NodeList;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +71,55 @@ class Exercises {
         return numbersMz;
     }
 
+    private int majorityElement(int[] numbersMe) {
+        Map<Integer, Integer> countHashMap = new HashMap<Integer, Integer>();
+        // Create the hash map
+        for(int i=0; i<numbersMe.length; i++) {
+            if(countHashMap.containsKey(numbersMe[i])) {
+                countHashMap.put(numbersMe[i], countHashMap.get(numbersMe[i])+1);
+            } else countHashMap.put(numbersMe[i], 1);
+        }
+
+        System.out.println(Arrays.asList(countHashMap));
+
+        // Find the majority element's count
+        int n = numbersMe.length;
+        int maxCount = countHashMap.values().stream().filter(v -> v > n/2).findFirst().get();
+
+        // Find the key/the majority element
+        for(Map.Entry<Integer, Integer> entry : countHashMap.entrySet()) {
+            if(entry.getValue().equals(maxCount)) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException("No solution");
+    }
+
+
+    private boolean areAnagrams(String u, String v) {
+        if (u.length() != v.length()) return false;
+
+        char[] sortedU = u.toCharArray();
+        char[] sortedV = v.toCharArray();
+        Arrays.sort(sortedU);
+        Arrays.sort(sortedV);
+        return Arrays.equals(sortedU, sortedV);
+    }
+
+    private ListNode reverseSinglyLinkedList(ListNode headNode) {
+        ListNode currentNode = headNode;
+        ListNode previousNode = null;
+        while(currentNode != null) {
+            // Save ref to next node
+            ListNode tempNextNode = currentNode.next;
+            // Move pointer from right to left instead the opposite
+            currentNode.next = previousNode;
+            // Slide nodes so the same pointer switch happens like a sliding window
+            previousNode = currentNode;
+            currentNode = tempNextNode;
+        }
+        return previousNode;
+    }
     public static void main(String[] args) {
             // Exercise 1: Reverse string
             Exercises rs = new Exercises();
@@ -97,5 +148,35 @@ class Exercises {
             int[] movedZeros = mz.moveZeros(numbersMz);
             System.out.println(Arrays.toString(movedZeros));
 
+            // Exercise 6: Majority element
+            int[] numbersMe = {3, 1, 3};
+            Exercises me = new Exercises();
+            System.out.println(me.majorityElement(numbersMe));
+
+            // Exercise 7: Valid anagram
+            Exercises va = new Exercises();
+            String s = "anagram",
+                   t = "nagaram",
+                   u = "rat",
+                   v = "car";
+            System.out.println(String.format("%s and %s are anagrams: %b", s, t, va.areAnagrams(s, t)));
+            System.out.println(String.format("%s and %s are anagrams: %b", u, v, va.areAnagrams(u, v)));
+
+            // Exercise 8: Reverse singly linked list
+            Exercises rsll = new Exercises();
+            // Input: 1->2->3->4->5->NULL
+            // Output: 5->4->3->2->1->NULL
+            ListNode linkedListToRev = new ListNode(1);
+            linkedListToRev.next = new ListNode(2);
+            linkedListToRev.next.next = new ListNode(3);
+            linkedListToRev.next.next.next = new ListNode(4);
+            linkedListToRev.next.next.next.next = null;
+            ListNode reversedSLL = rsll.reverseSinglyLinkedList(linkedListToRev);
+            System.out.println(reversedSLL.val);
+            System.out.println(reversedSLL.next.val);
+
     }
+
+
+
 }
